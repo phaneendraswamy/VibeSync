@@ -32,8 +32,12 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install
-      - name: Build
-        run: npm run build
+      - name: Build static playlist catalog and app
+        run: node scripts/generate-playlists.mjs && npm run build
+        env:
+          # This name matches the existing repository secret. It is intentionally
+          # not prefixed with VITE_, so Vite cannot expose it to the browser.
+          YOUTUBE_API_KEY: ${{ secrets.VITE_YOUTUBE_API_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
