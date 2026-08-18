@@ -401,7 +401,7 @@ function App() {
                     style={{ transform: transformStyle, opacity, zIndex, cursor: diff === 0 ? 'pointer' : 'pointer' }}
                     onClick={(e) => {
                        // Prevent click if we were just dragging
-                       if (isDragging || touchEnd) return; 
+                       if (touchEnd) return; 
                        diff === 0 ? handleMoodSelect(m.id) : setActiveMoodIndex(index)
                     }}
                   >
