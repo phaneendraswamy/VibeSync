@@ -1,14 +1,3 @@
-const QUERIES = {
-  "gym": "phonk drift workout high bass telugu motivation",
-  "chill": "telugu chill lofi songs calming",
-  "study": "telugu focus study music instrumental",
-  "night-drive": "telugu night drive songs hit tracks",
-  "sleep": "telugu sleep melodies relaxing songs",
-  "chaganti": "chaganti koteswara rao pravachanam latest",
-  "garikapati": "garikapati narasimha rao latest speech",
-  "love": "telugu romantic love songs playlist hit tracks"
-};
-
 // GitHub Pages is static, so the YouTube Data API key must never be bundled
 // into the browser. These are embeddable fallback videos; no API key is used.
 const PLAYLISTS = {
