@@ -64,8 +64,8 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/ambient-os.git
-cd ambient-os
+git clone https://github.com/phaneendraswamy/VibeSync.git
+cd VibeSync
 
 # 2. Install dependencies
 npm install
