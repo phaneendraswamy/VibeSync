@@ -1,4 +1,4 @@
-# 🌌 Ambient OS
+# 🌌 VibeSync
 
 > **A futuristic, glassmorphism ambient music experience that breathes with your environment.**
 
@@ -11,7 +11,7 @@
 
 ## ✨ The Vibe
 
-**Ambient OS** isn't just a music player—it's an atmospheric operating system for your focus, relaxation, and workout sessions. Built with a **Glassmorphism UI** and a **WebGL-accelerated Particle Engine**, it bridges the gap between your digital workspace and the physical world outside your window.
+**VibeSync** isn't just a music player—it's an atmospheric operating system for your focus, relaxation, and workout sessions. Built with a **Glassmorphism UI** and a **WebGL-accelerated Particle Engine**, it bridges the gap between your digital workspace and the physical world outside your window.
 
 ---
 

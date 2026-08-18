@@ -104,12 +104,12 @@ function App() {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: currentSong.title,
-          artist: 'Mood Ambient App',
+          artist: 'VibeSync',
           album: `${MOODS.find(m => m.id === mood)?.name} Vibes`,
         });
       }
     } else {
-      document.title = 'Ambient OS';
+      document.title = 'VibeSync';
     }
   }, [currentSongIndex, playlist, mood]);
 
