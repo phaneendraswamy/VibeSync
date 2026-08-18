@@ -20,6 +20,7 @@
 | Feature | Description |
 | :--- | :--- |
 | **🌀 3D Coverflow Carousel** | A buttery-smooth, WebGL-powered carousel to flip through 8 distinct "Vibes" with authentic depth and perspective. |
+| **🎛️ Custom iOS-Style Controls** | Features a glassmorphism vertical volume slider docked on the right and a linear seek bar for precise time scrubbing. |
 | **🎵 Curated Telugu Soundscapes** | 8 Hand-crafted moods: **GYM, Chill/Cafe, Study/Focus, Night Drive, Sleep, Chaganti, Garikapati, Love/Romance** — powered by YouTube Data API v3. |
 | **☀️ Live Environment Sync** | Uses `navigator.geolocation` + **Open-Meteo API** (no key required!) to fetch real-time Weather, Temperature, and Time of Day. |
 | **🎨 Dynamic Particle Engine** | Custom **HTML5 Canvas** renderer: <br>🌧️ *Rain* (velocity-based streaks) ❄️ *Snow/Frost* (turbulent drift) ☀️ *Heat Orbs* (glowing pulse) ☁️ *Volumetric Clouds* (perlin noise). |

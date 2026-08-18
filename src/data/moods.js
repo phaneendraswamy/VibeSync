@@ -5,7 +5,8 @@ export const MOODS = [
     iconName: "Dumbbell",
     theme: "red",
     tagline: "High-energy workout vibes",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/crowds/stadium_crowd.ogg"
   },
   {
     id: "chill",
@@ -13,7 +14,8 @@ export const MOODS = [
     iconName: "Coffee",
     theme: "orange",
     tagline: "Relaxed acoustic vibes",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/crowds/restaurant_crowd.ogg"
   },
   {
     id: "study",
@@ -21,7 +23,8 @@ export const MOODS = [
     iconName: "Brain",
     theme: "blue",
     tagline: "Deep focus and concentration",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/ambiences/library_atmosphere.ogg"
   },
   {
     id: "night-drive",
@@ -29,7 +32,8 @@ export const MOODS = [
     iconName: "CarFront",
     theme: "purple",
     tagline: "Smooth cruising under city lights",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/transportation/highway_with_passing_cars.ogg"
   },
   {
     id: "sleep",
@@ -37,7 +41,8 @@ export const MOODS = [
     iconName: "MoonStar",
     theme: "indigo",
     tagline: "Drift away to ambient lullabies",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg"
   },
   {
     id: "chaganti",
@@ -45,7 +50,8 @@ export const MOODS = [
     iconName: "BookOpenText",
     theme: "amber",
     tagline: "Spiritual wisdom and pravachanams",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/ambiences/outdoor_ambience_with_birds.ogg"
   },
   {
     id: "garikapati",
@@ -53,7 +59,8 @@ export const MOODS = [
     iconName: "Mic",
     theme: "amber",
     tagline: "Inspiring spiritual speeches",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/ambiences/outdoor_ambience_with_birds.ogg"
   },
   {
     id: "love",
@@ -61,7 +68,8 @@ export const MOODS = [
     iconName: "Heart",
     theme: "red",
     tagline: "Heartfelt romantic melodies",
-    hasGodSelector: false
+    hasGodSelector: false,
+    sfxUrl: "https://actions.google.com/sounds/v1/weather/calm_breeze_with_birds.ogg"
   }
 ];
 

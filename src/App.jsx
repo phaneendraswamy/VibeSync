@@ -52,9 +52,9 @@ function App() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [theme, setTheme] = useState('default');
-  const [volume, setVolume] = useState(100);
   
   // New Player States
+  const [volume, setVolume] = useState(100);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isShuffle, setIsShuffle] = useState(true);
@@ -258,6 +258,33 @@ function App() {
     }
   };
 
+  const handleSeek = (e) => {
+    const newTime = parseFloat(e.target.value);
+    setCurrentTime(newTime);
+    if (playerRef.current && playerRef.current.seekTo) {
+      playerRef.current.seekTo(newTime, true);
+    }
+  };
+
+  const volumeTrackRef = useRef(null);
+
+  const handleVolumeDrag = (e) => {
+    if (!volumeTrackRef.current) return;
+    const rect = volumeTrackRef.current.getBoundingClientRect();
+    const y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+    const percentage = 100 - (y / rect.height) * 100;
+    const newVol = Math.max(0, Math.min(100, percentage));
+    setVolume(newVol);
+    if (playerRef.current && playerRef.current.setVolume) {
+      playerRef.current.setVolume(newVol);
+    }
+  };
+
+  const handleVolumePointerDown = (e) => {
+    e.target.setPointerCapture(e.pointerId);
+    handleVolumeDrag(e);
+  };
+
   const onPlayerReady = (event) => {
     playerRef.current = event.target;
     playerRef.current.setVolume(volume);
@@ -274,12 +301,6 @@ function App() {
     } else if (event.data === 2) {
       setIsPlaying(false);
     }
-  };
-
-  const handleVolumeChange = (e) => {
-    const val = parseInt(e.target.value);
-    setVolume(val);
-    if (playerRef.current) playerRef.current.setVolume(val);
   };
 
   const BackgroundLayers = () => (
@@ -423,7 +444,6 @@ function App() {
   }
 
   const currentSong = playlist[currentSongIndex];
-  const opts = { height: '0', width: '0', playerVars: { autoplay: 1, controls: 0 } };
 
   // Calculate Radial Scrubber Physics
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
@@ -461,18 +481,35 @@ function App() {
               </span>
             </div>
 
-            <h2 style={{margin: '0', fontSize: '2rem'}}>{MOODS.find(m => m.id === mood)?.name}</h2>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', margin: '0', padding: '0 4rem'}}>
+              <h2 style={{margin: '0', fontSize: '2rem'}}>{MOODS.find(m => m.id === mood)?.name}</h2>
+            </div>
             
-            <div className="now-playing" style={{minHeight: '2.5rem', fontSize: '1.2rem', color: 'rgba(255,255,255,0.7)'}}>
+            <div className="now-playing" style={{minHeight: '3rem', fontSize: '1rem', color: 'rgba(255,255,255,0.7)', padding: '0 5rem', lineHeight: '1.4'}}>
               {currentSong ? currentSong.title : 'No songs found for this selection.'}
             </div>
 
-            <div style={{fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace', letterSpacing: '2px', marginTop: '-0.5rem'}}>
-              {formatTime(currentTime)} / {formatTime(duration)}
+            {/* Linear Seek Bar */}
+            <div className="seek-container" style={{ width: '100%', maxWidth: '350px', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem', padding: '0 1rem' }}>
+              <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
+                {formatTime(currentTime)}
+              </span>
+              <input 
+                type="range" 
+                className="horizontal-seek-bar" 
+                min="0" 
+                max={duration || 100} 
+                value={currentTime} 
+                onChange={handleSeek} 
+                style={{ flex: 1 }}
+              />
+              <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
+                {formatTime(duration)}
+              </span>
             </div>
-
+            
             {/* Core Controls */}
-            <div className="controls">
+            <div className="controls" style={{marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center'}}>
                <button className="btn-icon" onClick={toggleShuffle} style={{width: '50px', height: '50px', color: isShuffle ? '#fff' : 'rgba(255,255,255,0.3)', border: isShuffle ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent'}}>
                  <Shuffle size={20} />
                </button>
@@ -490,24 +527,41 @@ function App() {
                </button>
              </div>
             
-            {!isMobile && (
-              <div className="slider-container" style={{marginTop: '2rem'}}>
-                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                   <label>Main Track Volume</label>
-                   <button onClick={() => {
-                     const newVal = volume === 0 ? 100 : 0;
-                     handleVolumeChange({target: {value: newVal}});
-                   }} style={{background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: 0}}>
-                     {volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                   </button>
-                 </div>
-                 <input type="range" min="0" max="100" value={volume} onChange={handleVolumeChange} />
+            {currentSong && (
+              <div style={{display: 'none'}}>
+                <YouTube
+                  videoId={currentSong.id}
+                  opts={{
+                    playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: currentSong.id },
+                  }}
+                  onReady={onPlayerReady}
+                  onStateChange={onPlayerStateChange}
+                  onEnd={handleNextTrack}
+                />
               </div>
             )}
             
-            {currentSong && (
-              <div style={{display: 'none'}}>
-                <YouTube videoId={currentSong.id} opts={opts} onReady={onPlayerReady} onStateChange={onPlayerStateChange} />
+            {/* Vertical Volume Slider (Right Side) */}
+            {!isMobile && (
+              <div className="vertical-volume-container">
+                <button onClick={() => {
+                  const newVal = volume === 0 ? 100 : 0;
+                  setVolume(newVal);
+                  if (playerRef.current && playerRef.current.setVolume) playerRef.current.setVolume(newVal);
+                }} className="vol-btn">
+                  {volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                </button>
+                <div className="slider-wrapper">
+                  <div 
+                    ref={volumeTrackRef}
+                    className="custom-vertical-slider"
+                    onPointerDown={handleVolumePointerDown}
+                    onPointerMove={(e) => e.buttons > 0 && handleVolumeDrag(e)}
+                  >
+                    <div className="custom-vertical-slider-fill" style={{ height: `${volume}%` }} />
+                    <div className="custom-vertical-slider-thumb" style={{ bottom: `${volume}%` }} />
+                  </div>
+                </div>
               </div>
             )}
             
