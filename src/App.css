@@ -1,1 +1,33 @@
-/* Removed default Vite styling that was breaking the full-screen layout */
+/* --- WEATHER SYNCED BACKGROUNDS --- */
+.app-container {
+  min-height: 100vh;
+  transition: background 1.5s ease;
+}
+
+/* Sunny / Clear Day */
+.app-container.weather-clear.time-day {
+  background: radial-gradient(circle at center, #2e2410 0%, #000000 100%);
+}
+
+/* Clear Sunset */
+.app-container.weather-clear.time-sunset {
+  background: radial-gradient(circle at center, #2a1111 0%, #000000 100%);
+}
+
+/* Rainy (Any time of day) */
+.app-container.weather-rain {
+  background: radial-gradient(circle at center, #0a1128 0%, #000000 100%);
+}
+
+/* Cloudy (Any time of day) */
+.app-container.weather-clouds {
+  background: radial-gradient(circle at center, #1a1a24 0%, #000000 100%);
+}
+
+/* Add a cool glowing border to your Glass Cards based on weather! */
+.weather-clear.time-day .glass-card {
+  box-shadow: 0 0 20px rgba(255, 204, 0, 0.05);
+}
+.weather-rain .glass-card {
+  box-shadow: 0 0 20px rgba(78, 168, 222, 0.05);
+}
