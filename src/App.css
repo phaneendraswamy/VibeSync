@@ -1,33 +1,44 @@
 /* --- WEATHER SYNCED BACKGROUNDS --- */
-.app-container {
-  min-height: 100vh;
+.weather-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1; /* This puts it securely BEHIND the canvas */
   transition: background 1.5s ease;
+  pointer-events: none;
 }
 
 /* Sunny / Clear Day */
-.app-container.weather-clear.time-day {
+.weather-bg.weather-clear.time-day {
   background: radial-gradient(circle at center, #2e2410 0%, #000000 100%);
 }
 
 /* Clear Sunset */
-.app-container.weather-clear.time-sunset {
+.weather-bg.weather-clear.time-sunset {
   background: radial-gradient(circle at center, #2a1111 0%, #000000 100%);
 }
 
 /* Rainy (Any time of day) */
-.app-container.weather-rain {
+.weather-bg.weather-rain {
   background: radial-gradient(circle at center, #0a1128 0%, #000000 100%);
 }
 
 /* Cloudy (Any time of day) */
-.app-container.weather-clouds {
+.weather-bg.weather-clouds {
   background: radial-gradient(circle at center, #1a1a24 0%, #000000 100%);
 }
 
-/* Add a cool glowing border to your Glass Cards based on weather! */
-.weather-clear.time-day .glass-card {
-  box-shadow: 0 0 20px rgba(255, 204, 0, 0.05);
+/* Cool glowing border to your Glass Cards based on weather! */
+.app-container.weather-clear.time-day .glass-card {
+  box-shadow: 
+    0 30px 60px -10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(255, 204, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
 }
-.weather-rain .glass-card {
-  box-shadow: 0 0 20px rgba(78, 168, 222, 0.05);
+.app-container.weather-rain .glass-card {
+  box-shadow: 
+    0 30px 60px -10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(78, 168, 222, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
 }
