@@ -34,6 +34,8 @@ body {
   z-index: 10;
   position: relative;
   perspective: 2000px;
+  /* Added transition for smooth weather changes */
+  transition: background 1.5s ease, box-shadow 1.5s ease;
 }
 
 /* Futuristic Ultra-Glass Panel (VisionOS / Web3 Style) */
@@ -54,7 +56,7 @@ body {
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  transition: transform 0.1s ease-out; /* Smooth mouse tracking */
+  transition: transform 0.1s ease-out, box-shadow 1.5s ease; 
   transform-style: preserve-3d;
 }
 
@@ -515,4 +517,41 @@ input[type=range]::-webkit-slider-thumb:hover {
 .bg-layer.time-night {
   background: radial-gradient(circle at 50% 0%, #141e30 0%, #243b55 50%, #030305 100%);
   opacity: 1;
+}
+
+/* --- ADDED WEATHER SYNCED BACKGROUNDS --- */
+/* Sunny / Clear Day */
+.app-container.weather-clear.time-day {
+  background: radial-gradient(circle at center, #2e2410 0%, #000000 100%);
+}
+
+/* Clear Sunset */
+.app-container.weather-clear.time-sunset {
+  background: radial-gradient(circle at center, #2a1111 0%, #000000 100%);
+}
+
+/* Rainy (Any time of day) */
+.app-container.weather-rain {
+  background: radial-gradient(circle at center, #0a1128 0%, #000000 100%);
+}
+
+/* Cloudy (Any time of day) */
+.app-container.weather-clouds {
+  background: radial-gradient(circle at center, #1a1a24 0%, #000000 100%);
+}
+
+/* Cool glowing border to your Glass Cards based on weather! */
+.weather-clear.time-day .glass-card {
+  box-shadow: 
+    0 30px 60px -10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(255, 204, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+.weather-rain .glass-card {
+  box-shadow: 
+    0 30px 60px -10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(78, 168, 222, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
 }
