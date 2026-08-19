@@ -15,9 +15,7 @@ const ICON_MAP = {
 function useMouseTilt() {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   useEffect(() => {
-    // Disable on touch devices to save performance
     if (window.matchMedia("(pointer: coarse)").matches) return;
-    
     const handleMouseMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 15;
       const y = (e.clientY / window.innerHeight - 0.5) * -15;
@@ -54,16 +52,13 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [theme, setTheme] = useState('default');
   
-  // New Player States
   const [volume, setVolume] = useState(100);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isShuffle, setIsShuffle] = useState(true);
   
-  // Weather State
   const [weatherData, setWeatherData] = useState({ condition: 'clear', timeOfDay: 'night', temp: 25 });
 
-  // Swipe States
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -72,7 +67,6 @@ function App() {
   const tilt = useMouseTilt();
   const [isMobile, setIsMobile] = useState(false);
 
-  // Weather Fetch & Mobile Check
   useEffect(() => {
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
     const initApp = async () => {
@@ -82,7 +76,6 @@ function App() {
     initApp();
   }, []);
 
-  // Background play & MediaSession setup
   useEffect(() => {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.setActionHandler('play', () => {
@@ -114,7 +107,6 @@ function App() {
     }
   }, [currentSongIndex, playlist, mood]);
 
-  // Progress Polling
   useEffect(() => {
     let interval;
     if (isPlaying) {
@@ -132,7 +124,6 @@ function App() {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  // --- SWIPE LOGIC ---
   const minSwipeDistance = 50;
   
   const onTouchStart = (e) => {
@@ -160,8 +151,6 @@ function App() {
     if (isRightSwipe) {
       setActiveMoodIndex(Math.max(0, activeMoodIndex - 1));
     }
-    
-    // Crucial: Clear touch states so it doesn't block clicks later!
     setTouchStart(null);
     setTouchEnd(null);
   };
@@ -185,7 +174,6 @@ function App() {
       setIsDragging(false);
     }
   };
-  // -------------------
 
   const handleMoodSelect = (selectedMood) => {
     const moodObj = MOODS.find(m => m.id === selectedMood);
@@ -306,13 +294,11 @@ function App() {
 
   const BackgroundLayers = () => (
     <>
-      {/* Time of Day Backgrounds for Selection Screen */}
       <div className={`bg-layer time-sunrise ${!mood && weatherData.timeOfDay === 'sunrise' ? 'active' : ''}`} />
       <div className={`bg-layer time-day ${!mood && weatherData.timeOfDay === 'day' ? 'active' : ''}`} />
       <div className={`bg-layer time-sunset ${!mood && weatherData.timeOfDay === 'sunset' ? 'active' : ''}`} />
       <div className={`bg-layer time-night ${!mood && weatherData.timeOfDay === 'night' ? 'active' : ''}`} />
 
-      {/* Mood Backgrounds for Player Screen */}
       <div className={`bg-layer theme-default ${mood && theme === 'default' ? 'active' : ''}`} />
       <div className={`bg-layer theme-red ${mood && theme === 'red' ? 'active' : ''}`} />
       <div className={`bg-layer theme-orange ${mood && theme === 'orange' ? 'active' : ''}`} />
@@ -323,11 +309,18 @@ function App() {
     </>
   );
 
+  const glassStyle = {
+    transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
+  };
+
   if (isLoadingData) {
     return (
       <>
+        {/* Isolated background layer for weather */}
+        <div className={`weather-bg weather-${weatherData.condition} time-${weatherData.timeOfDay}`} />
         <BackgroundLayers />
         <CanvasEffects mood="weather" isPlaying={true} weatherData={weatherData} />
+        
         <div className="boot-container screen-enter" style={{background: 'transparent'}}>
           <div className="boot-logo" style={{fontSize: '1.5rem'}}>Connecting to Satellite...</div>
           <div className="scanner-line"></div>
@@ -337,16 +330,14 @@ function App() {
     );
   }
 
-  const glassStyle = {
-    transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
-  };
-
   if (!mood) {
     return (
       <>
+        {/* Isolated background layer for weather */}
+        <div className={`weather-bg weather-${weatherData.condition} time-${weatherData.timeOfDay}`} />
         <BackgroundLayers />
         <CanvasEffects mood="weather" isPlaying={true} weatherData={weatherData} />
-        {/* ADDED WEATHER CLASSES HERE */}
+        
         <div className={`app-container screen-enter weather-${weatherData.condition} time-${weatherData.timeOfDay}`}>
           <div className="glass-card" style={{...glassStyle, padding: '2rem 1rem'}}>
             <h1 style={{marginBottom: '0.5rem'}}>Select Vibe</h1>
@@ -367,8 +358,6 @@ function App() {
                 let opacity = 0;
                 let zIndex = 1;
                 
-                // Using translate(-50%, -50%) as base because of absolute positioning in CSS
-                // and % for translateX so it scales responsively on mobile
                 const baseTranslate = 'translate(-50%, -50%)';
                 
                 if (diff === 0) {
@@ -402,7 +391,6 @@ function App() {
                     className="card-btn carousel-item" 
                     style={{ transform: transformStyle, opacity, zIndex, cursor: diff === 0 ? 'pointer' : 'pointer' }}
                     onClick={(e) => {
-                       // Prevent click if we were just dragging
                        if (touchEnd) return; 
                        diff === 0 ? handleMoodSelect(m.id) : setActiveMoodIndex(index)
                     }}
@@ -446,8 +434,6 @@ function App() {
   }
 
   const currentSong = playlist[currentSongIndex];
-
-  // Calculate Radial Scrubber Physics
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const radius = 55;
   const dashArray = 2 * Math.PI * radius;
@@ -455,11 +441,13 @@ function App() {
 
   return (
     <>
+      {/* Isolated background layer for weather */}
+      <div className={`weather-bg weather-${weatherData.condition} time-${weatherData.timeOfDay}`} />
       <BackgroundLayers />
-      {/* ADDED WEATHER DATA HERE */}
+      
+      {/* Canvas is now guaranteed to sit on top of the weather backgrounds! */}
       <CanvasEffects mood={mood} isPlaying={isPlaying} weatherData={weatherData} />
 
-      {/* ADDED WEATHER CLASSES HERE */}
       <div className={`app-container screen-enter weather-${weatherData.condition} time-${weatherData.timeOfDay}`}>
         <button className="btn-icon" onClick={goBack} style={{position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 10, width: '50px', height: '50px'}}>
           <ArrowLeft />
@@ -468,7 +456,6 @@ function App() {
         <div className="glass-card" style={{maxWidth: '600px', zIndex: 10, ...glassStyle}}>
           <div className="player-container">
             
-            {/* Radial Scrubber & Artwork */}
             <div style={{position: 'relative', width: '140px', height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem'}}>
               <svg width="140" height="140" style={{position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)'}}>
                 <circle cx="70" cy="70" r={radius} fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
@@ -493,7 +480,6 @@ function App() {
               {currentSong ? currentSong.title : 'No songs found for this selection.'}
             </div>
 
-            {/* Linear Seek Bar */}
             <div className="seek-container" style={{ width: '100%', maxWidth: '350px', display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem', padding: '0 1rem' }}>
               <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums' }}>
                 {formatTime(currentTime)}
@@ -512,7 +498,6 @@ function App() {
               </span>
             </div>
             
-            {/* Core Controls */}
             <div className="controls" style={{marginTop: '1.5rem', display: 'flex', gap: '1rem', justifyContent: 'center'}}>
                <button className="btn-icon" onClick={toggleShuffle} style={{width: '50px', height: '50px', color: isShuffle ? '#fff' : 'rgba(255,255,255,0.3)', border: isShuffle ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent'}}>
                  <Shuffle size={20} />
@@ -545,7 +530,6 @@ function App() {
               </div>
             )}
             
-            {/* Vertical Volume Slider (Right Side) */}
             {!isMobile && (
               <div className="vertical-volume-container">
                 <button onClick={() => {
