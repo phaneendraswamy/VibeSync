@@ -1,3 +1,4 @@
+import './App.css';
 import React, { useState, useEffect, useRef } from 'react';
 import YouTube from 'react-youtube';
 import { MOODS } from './data/moods';
