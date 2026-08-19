@@ -31,12 +31,16 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
     return cleanup;
   }, [initialize]);
 
+  // HELPER: Which moods should listen to the live weather?
+  const isWeatherSynced = mood === 'weather' || mood === 'chill' || mood === 'night-drive';
+
   const initParticles = () => {
     const { current: width } = widthRef;
     const { current: height } = heightRef;
     particlesRef.current = [];
 
-    if (mood === 'weather' && weatherData) {
+    // 1. WEATHER-SYNCED MOODS
+    if (isWeatherSynced && weatherData) {
       if (weatherData.condition === 'rain') {
         const dropCount = Math.floor((width * height) / 5000);
         for (let i = 0; i < dropCount; i++) {
@@ -62,6 +66,13 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
           });
         }
       } else if (weatherData.condition === 'clear') {
+        
+        // SUNRISE / SUNSET DYNAMIC COLORS
+        let orbHue = 220; // Default Night (Blue)
+        if (weatherData.timeOfDay === 'day') orbHue = 50; // Yellow
+        if (weatherData.timeOfDay === 'sunrise') orbHue = 30; // Orange/Pink
+        if (weatherData.timeOfDay === 'sunset') orbHue = 15; // Deep Red/Orange
+
         const orbCount = Math.floor((width * height) / 12000);
         for (let i = 0; i < orbCount; i++) {
           particlesRef.current.push({
@@ -70,7 +81,7 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
             vx: (Math.random() - 0.5) * 0.3,
             vy: (Math.random() - 0.5) * 0.3,
             size: Math.random() * 20 + 5,
-            hue: weatherData.timeOfDay === 'day' ? 50 : 220, 
+            hue: orbHue, 
             phase: Math.random() * Math.PI * 2
           });
         }
@@ -86,7 +97,9 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
           });
         }
       }
-    } else if (mood === 'gym') {
+    } 
+    // 2. FIXED ANIMATION MOODS
+    else if (mood === 'gym') {
       const particleCount = Math.floor((width * height) / 4000);
       for (let i = 0; i < particleCount; i++) {
         particlesRef.current.push({
@@ -113,7 +126,7 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
           phase: Math.random() * Math.PI * 2
         });
       }
-    } else if (mood === 'chill' || mood === 'love') {
+    } else if (mood === 'love') {
       const dropCount = Math.floor((width * height) / 10000);
       for (let i = 0; i < dropCount; i++) {
         particlesRef.current.push({
@@ -142,18 +155,6 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
           color: `hsl(220, 80%, 80%)`,
         });
       }
-    } else if (mood === 'night-drive') {
-      const lineCount = Math.floor((width * height) / 6000);
-      for (let i = 0; i < lineCount; i++) {
-        particlesRef.current.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          length: 50 + Math.random() * 150,
-          speed: 20 + Math.random() * 30,
-          hue: Math.random() > 0.5 ? 20 : 280, // Red or Purple neon
-          opacity: 0.1 + Math.random() * 0.4
-        });
-      }
     } else if (mood === 'chaganti' || mood === 'garikapati') {
       const dustCount = Math.floor((width * height) / 12000);
       for (let i = 0; i < dustCount; i++) {
@@ -175,7 +176,7 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
     const { current: height } = heightRef;
     const timeScale = delta * 0.06;
 
-    if (mood === 'weather' && weatherData) {
+    if (isWeatherSynced && weatherData) {
       if (weatherData.condition === 'rain') {
         particlesRef.current.forEach((drop) => {
           drop.y += drop.speed * timeScale;
@@ -237,7 +238,7 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
         if (orb.y < -100) orb.y = height + 100;
         if (orb.y > height + 100) orb.y = -100;
       });
-    } else if (mood === 'chill' || mood === 'love') {
+    } else if (mood === 'love') {
       particlesRef.current.forEach((drop) => {
         drop.y += drop.speed * timeScale;
         if (drop.y > height + drop.length) {
@@ -256,14 +257,6 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
         if (star.x > width) star.x = 0;
         if (star.y < 0) star.y = height;
         if (star.y > height) star.y = 0;
-      });
-    } else if (mood === 'night-drive') {
-      particlesRef.current.forEach((line) => {
-        line.y += line.speed * timeScale;
-        if (line.y > height + line.length) {
-          line.y = -line.length;
-          line.x = Math.random() * width;
-        }
       });
     } else if (mood === 'chaganti' || mood === 'garikapati') {
       particlesRef.current.forEach((dust) => {
@@ -287,7 +280,7 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
 
     ctx.clearRect(0, 0, width, height);
 
-    if (mood === 'weather' && weatherData) {
+    if (isWeatherSynced && weatherData) {
       if (weatherData.condition === 'rain') {
         ctx.lineCap = 'round';
         particlesRef.current.forEach((drop) => {
@@ -353,7 +346,7 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
         ctx.fill();
       });
       ctx.globalCompositeOperation = 'source-over';
-    } else if (mood === 'chill' || mood === 'love') {
+    } else if (mood === 'love') {
       ctx.lineCap = 'round';
       particlesRef.current.forEach((drop) => {
         ctx.beginPath();
@@ -377,17 +370,6 @@ const CanvasEffects = ({ mood, isPlaying, weatherData }) => {
           ctx.shadowBlur = 0;
         }
       });
-    } else if (mood === 'night-drive') {
-      ctx.globalCompositeOperation = 'lighter';
-      particlesRef.current.forEach((line) => {
-        ctx.beginPath();
-        ctx.moveTo(line.x, line.y);
-        ctx.lineTo(line.x, line.y + line.length);
-        ctx.strokeStyle = `hsla(${line.hue}, 100%, 60%, ${line.opacity})`;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-      });
-      ctx.globalCompositeOperation = 'source-over';
     } else if (mood === 'chaganti' || mood === 'garikapati') {
       particlesRef.current.forEach((dust) => {
         ctx.beginPath();
