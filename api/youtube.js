@@ -1,4 +1,4 @@
-// File: /api/youtube.js
+// File: /api/youtube.js (ROOT folder)
 
 export default async function handler(req, res) {
   const { mood } = req.query;
@@ -8,50 +8,41 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "API key is missing in Vercel" });
   }
 
-  // 1. Exact match your README to specific Telugu/Thematic queries
-  const moodQueries = {
-    // Mixed languages, high vibe
-    gym: "gym workout motivation high intensity heavy bass songs", 
-    
-    // Telugu specific
-    chill: "telugu lo-fi beats acoustic covers chill cafe music",
-    study: "study focus minimalist piano alpha waves no vocals",
-    drive: "telugu retro remixes synthwave night drive music",
-    sleep: "sleep delta waves slow rain drone textures",
-    chaganti: "chaganti koteswara rao discourses pravachanam",
-    garikapati: "garikapati narasimha rao sahitya avadhanam",
-    love: "telugu melody hits romantic duets soulful lyrics"
+  // Your exact custom mix queries!
+  const QUERIES = {
+    "gym": "phonk drift workout high bass telugu motivation",
+    "chill": "telugu chill lofi songs calming",
+    "study": "telugu focus study music instrumental",
+    "night-drive": "telugu night drive songs hit tracks",
+    "sleep": "telugu sleep melodies relaxing songs",
+    "chaganti": "chaganti koteswara rao pravachanam latest",
+    "garikapati": "garikapati narasimha rao latest speech",
+    "love": "telugu romantic love songs playlist hit tracks"
   };
 
-  // Convert the mood to lowercase to match the object above
   const moodKey = mood ? mood.toLowerCase() : '';
-  
-  // Get the specific query, or fallback to a default Telugu search
-  let searchQuery = moodQueries[moodKey] || `telugu ${mood} music songs`;
-
-  // 2. Add secret keywords to force YouTube to avoid Shorts and 10 hour loops
-  // Adding "-shorts" tells YouTube to exclude shorts.
-  searchQuery += " -shorts -mashup";
+  const query = QUERIES[moodKey] || "ambient music";
 
   try {
-    // 3. We use videoDuration=medium to only get videos between 4 to 20 minutes!
-    // This perfectly cuts out the 10-hour mixes and the 30-second shorts.
-    const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${encodeURIComponent(searchQuery)}&type=video&videoDuration=medium&videoEmbeddable=true&key=${API_KEY}`
-    );
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${encodeURIComponent(query)}&type=video&videoDuration=medium&videoEmbeddable=true&key=${API_KEY}`;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+    }
     
     const data = await response.json();
     
-    if (!data.items) {
-      return res.status(200).json([]);
-    }
+    // Clean up titles exactly how you had it
+    const songs = data.items
+      .filter(item => item.id && item.id.videoId) // Ensure valid videos
+      .map(item => ({
+        id: item.id.videoId,
+        title: item.snippet.title.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&'),
+        mood: moodKey
+      }));
 
-    const liveSongs = data.items.map(item => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-    }));
-
-    res.status(200).json(liveSongs);
+    res.status(200).json(songs);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch from YouTube" });
   }
