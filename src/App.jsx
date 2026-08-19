@@ -345,7 +345,8 @@ function App() {
       <>
         <BackgroundLayers />
         <CanvasEffects mood="weather" isPlaying={true} weatherData={weatherData} />
-        <div className="app-container screen-enter">
+        {/* ADDED WEATHER CLASSES HERE */}
+        <div className={`app-container screen-enter weather-${weatherData.condition} time-${weatherData.timeOfDay}`}>
           <div className="glass-card" style={{...glassStyle, padding: '2rem 1rem'}}>
             <h1 style={{marginBottom: '0.5rem'}}>Select Vibe</h1>
             
@@ -454,9 +455,11 @@ function App() {
   return (
     <>
       <BackgroundLayers />
-      <CanvasEffects mood={mood} isPlaying={isPlaying} />
+      {/* ADDED WEATHER DATA HERE */}
+      <CanvasEffects mood={mood} isPlaying={isPlaying} weatherData={weatherData} />
 
-      <div className="app-container screen-enter">
+      {/* ADDED WEATHER CLASSES HERE */}
+      <div className={`app-container screen-enter weather-${weatherData.condition} time-${weatherData.timeOfDay}`}>
         <button className="btn-icon" onClick={goBack} style={{position: 'absolute', top: '1.5rem', left: '1.5rem', zIndex: 10, width: '50px', height: '50px'}}>
           <ArrowLeft />
         </button>
